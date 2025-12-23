@@ -3,64 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Zenith Pro | Enterprise Productivity</title>
-
+    <title>Zenith Pro | Executive Workspace</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-<!-- AUTH -->
 <div id="authScreen" class="auth-wrapper">
     <div class="auth-inner card-glass">
         <div class="auth-logo">Z<span>P</span></div>
         <h1>Zenith Pro</h1>
-        <p>Secure workspace initialization</p>
-
-        <input type="text" id="userNameInput" placeholder="Enter full name" autofocus>
-        <button class="primary-btn" onclick="login()">Initialize Workspace</button>
+        <p>Initialize your secure workspace</p>
+        <div class="input-field">
+            <input type="text" id="userNameInput" placeholder="Enter full name" autofocus>
+        </div>
+        <button class="primary-btn pulse" onclick="login()">Enter Workspace</button>
     </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="app-layout" style="display:none;">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="side-logo">ZENITH<span>PRO</span></div>
-
         <nav>
-            <button class="nav-item active" onclick="setFilter('all')">🌐 Global Hub</button>
-            <button class="nav-item" onclick="setFilter('my')">👤 My Assignments</button>
+            <button class="nav-item active" onclick="setFilter('all', this)">
+                <span class="icon">🌐</span> Global Feed
+            </button>
+            <button class="nav-item" onclick="setFilter('my', this)">
+                <span class="icon">👤</span> My Assignments
+            </button>
         </nav>
-
-        <div class="user-pill">
-            <div class="avatar" id="avatarIcon"></div>
-            <span id="userName"></span>
-            <button class="logout-icon" onclick="logout()">⎋</button>
+        <div class="user-pill-container">
+            <div class="user-pill card-glass">
+                <div class="avatar" id="avatarIcon"></div>
+                <div class="user-meta">
+                    <span id="userName"></span>
+                    <small>Verified Pro</small>
+                </div>
+                <button class="logout-icon" onclick="logout()">⎋</button>
+            </div>
         </div>
     </aside>
 
     <main class="content">
-        <header class="mobile-header">
-            <div class="side-logo">Z<span>P</span></div>
-            <button onclick="logout()">Logout</button>
+        <header class="top-header">
+            <div class="header-text">
+                <h2>Mission Control</h2>
+                <p>Deploy and track enterprise operations</p>
+            </div>
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
         </header>
 
-        <section class="top-section">
-            <h2>Mission Control</h2>
-            <p>Deploy tasks to the enterprise network</p>
-
+        <section class="creator-panel">
             <div class="bento-input-grid card-glass">
-                <div class="input-card">
-                    <label>MISSION NAME</label>
-                    <input type="text" id="taskInput" placeholder="Final Year Project Submission">
+                <div class="input-card span-2">
+                    <label>MISSION OBJECTIVE</label>
+                    <input type="text" id="taskInput" placeholder="e.g., Final Year Project Sync">
                 </div>
 
                 <div class="input-card">
-                    <label>TIME PERIOD</label>
+                    <label>TIMEFRAME</label>
                     <div class="range-inputs">
                         <input type="date" id="startDate">
-                        <span>to</span>
+                        <span class="sep">→</span>
                         <input type="date" id="endDate">
                     </div>
                 </div>
