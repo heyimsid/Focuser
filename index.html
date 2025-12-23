@@ -2,62 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenith Focus | Shared Workspace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zenith Focus | Professional Portal</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+    <div id="loginOverlay" class="full-overlay">
+        <div class="glass-card login-box">
+            <div class="logo">ZENITH<span>FOCUS</span></div>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Enter your name to access the workspace</p>
+            <input type="text" id="userNameInput" placeholder="Your Name...">
+            <button class="btn-add" onclick="login()">Enter Workspace</button>
+        </div>
+    </div>
+
     <div class="background-blobs"></div>
 
-    <div class="workspace">
+    <div class="workspace" id="mainApp" style="display: none;">
         <header>
             <div class="logo">ZENITH<span>FOCUS</span></div>
-            <div class="header-right">
-                <select id="viewFilter" onchange="renderTasks()">
-                    <option value="all">View: All Tasks</option>
-                    <option value="public">View: Public (College)</option>
-                    <option value="private">View: My Private</option>
-                </select>
+            <div class="user-profile">
+                <span id="displayUserName"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </header>
 
-        <main class="glass-container">
-            <div class="input-section">
-                <input type="text" id="taskInput" placeholder="Task name (e.g., Exam Prep)...">
-                
-                <div class="input-row">
-                    <div class="field">
-                        <label>Start Date</label>
-                        <input type="date" id="startDate">
+        <main>
+            <div class="glass-card controls">
+                <div class="filter-row">
+                    <button class="filter-pill active" id="f-all" onclick="setFilter('all')">All</button>
+                    <button class="filter-pill" id="f-public" onclick="setFilter('public')">College Feed</button>
+                    <button class="filter-pill" id="f-private" onclick="setFilter('private')">My Tasks</button>
+                </div>
+
+                <div class="input-stack">
+                    <input type="text" id="taskInput" placeholder="What's the mission?">
+                    
+                    <div class="date-grid">
+                        <div class="field">
+                            <label>Start</label>
+                            <input type="date" id="startDate">
+                        </div>
+                        <div class="field">
+                            <label>End</label>
+                            <input type="date" id="endDate">
+                        </div>
                     </div>
-                    <div class="field">
-                        <label>End Date</label>
-                        <input type="date" id="endDate">
-                    </div>
-                    <div class="field">
-                        <label>Privacy</label>
-                        <select id="privacyInput">
-                            <option value="private">🔒 Private</option>
-                            <option value="public">🌐 Public (College)</option>
+
+                    <div class="action-row">
+                        <select id="privacyInput" class="theme-select">
+                            <option value="private">🔒 Private Task</option>
+                            <option value="public">🌐 Public (For Everyone)</option>
                         </select>
+                        <button class="btn-add" onclick="addTask()">ADD MISSION</button>
                     </div>
                 </div>
-                
-                <button class="btn-add" onclick="addTask()">CREATE MISSION</button>
             </div>
 
+            <div class="list-header">
+                <h3>ACTIVE PROJECTS</h3>
+            </div>
+            
             <ul class="task-list" id="taskList"></ul>
         </main>
     </div>
 
     <div id="celebrationOverlay" class="overlay">
-        <div class="celebration-card">
-            <div class="icon-wrap">🔥</div>
-            <h2>MISSION COMPLETE</h2>
-            <p id="quoteText"></p>
-            <button class="btn-continue" onclick="closeCelebration()">Next Task</button>
+        <div class="glass-card celebration-card">
+            <div class="icon-wrap">🚀</div>
+            <h2>MISSION ACCOMPLISHED</h2>
+            <p id="quoteText" class="quote"></p>
+            <button class="btn-add" onclick="closeCelebration()">Next Goal</button>
         </div>
     </div>
 
