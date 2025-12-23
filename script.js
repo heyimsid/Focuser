@@ -3,22 +3,22 @@ let tasks = JSON.parse(localStorage.getItem('zenith_pro_data')) || [];
 let currentFilter = 'all';
 let selectedPrivacy = 'private';
 
-// Boot Logic
 window.onload = () => {
     if (currentUser) {
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'grid';
-        document.getElementById('userName').innerText = currentUser;
-        document.getElementById('startDate').valueAsDate = new Date();
-        document.getElementById('endDate').valueAsDate = new Date(Date.now() + 86400000);
+        authScreen.style.display = 'none';
+        app.style.display = 'grid';
+        userName.innerText = currentUser;
+
+        startDate.valueAsDate = new Date();
+        endDate.valueAsDate = new Date(Date.now() + 86400000);
         renderTasks();
     }
 };
 
 function login() {
-    const val = document.getElementById('userNameInput').value.trim();
-    if (val.length < 2) return;
-    localStorage.setItem('zenith_pro_user', val);
+    const name = userNameInput.value.trim();
+    if (name.length < 2) return;
+    localStorage.setItem('zenith_pro_user', name);
     location.reload();
 }
 
@@ -27,79 +27,94 @@ function logout() {
     location.reload();
 }
 
-function setPrivacy(val) {
-    selectedPrivacy = val;
-    document.getElementById('btnPriv').classList.toggle('active', val === 'private');
-    document.getElementById('btnPub').classList.toggle('active', val === 'public');
+function setPrivacy(v) {
+    selectedPrivacy = v;
+    btnPriv.classList.toggle('active', v === 'private');
+    btnPub.classList.toggle('active', v === 'public');
+}
+
+function setFilter(f) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    currentFilter = f;
+    renderTasks();
 }
 
 function addTask() {
-    const name = document.getElementById('taskInput').value;
-    if (!name) return;
+    if (!taskInput.value) return;
 
-    const newTask = {
-        id: "T-" + Math.random().toString(36).substr(2, 9),
+    tasks.unshift({
+        id: crypto.randomUUID(),
         creator: currentUser,
-        title: name,
-        start: document.getElementById('startDate').value,
-        end: document.getElementById('endDate').value,
+        title: taskInput.value,
+        start: startDate.value,
+        end: endDate.value,
         visibility: selectedPrivacy,
         completedBy: []
-    };
+    });
 
-    tasks.unshift(newTask);
+    taskInput.value = "";
     save();
-    document.getElementById('taskInput').value = "";
 }
 
 function markDone(id) {
     const task = tasks.find(t => t.id === id);
     if (!task.completedBy.includes(currentUser)) {
         task.completedBy.push(currentUser);
-        confetti({ particleCount: 150, spread: 60, origin: { y: 0.7 }, colors: ['#6366f1'] });
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.7 } });
         save();
     }
 }
 
-function setFilter(f) {
-    currentFilter = f;
-    renderTasks();
-}
-
 function renderTasks() {
-    const list = document.getElementById('taskList');
-    list.innerHTML = "";
+    taskList.innerHTML = "";
 
-    const filtered = tasks.filter(t => {
-        if (currentFilter === 'my') return t.creator === currentUser;
-        return t.visibility === 'public' || t.creator === currentUser;
-    });
+    const filtered = tasks.filter(t =>
+        currentFilter === 'my'
+            ? t.creator === currentUser
+            : t.visibility === 'public' || t.creator === currentUser
+    );
+
+    if (!filtered.length) {
+        taskList.innerHTML = `
+            <div class="empty-state">
+                <h3>No missions deployed</h3>
+                <p>Create your first mission to activate the network.</p>
+            </div>`;
+        return;
+    }
 
     filtered.forEach(task => {
-        const isDone = task.completedBy.includes(currentUser);
+        const done = task.completedBy.includes(currentUser);
+        const expired = new Date(task.end) < new Date();
+        const status = done ? 'completed' : expired ? 'expired' : 'inprogress';
+
         const card = document.createElement('div');
-        card.className = 'task-card';
-        
+        card.className = 'task-card card-glass';
+
         card.innerHTML = `
-            <div class="task-badge badge-${task.visibility === 'public' ? 'pub' : 'priv'}">${task.visibility}</div>
-            <h3 style="font-size: 1.1rem; font-weight: 700;">${task.title}</h3>
-            <p style="font-size: 0.75rem; color: var(--muted);">Assigned by ${task.creator}</p>
-            <div style="font-size: 0.8rem; font-weight: 600; margin: 10px 0;">
-                📅 ${task.start} — ${task.end}
-            </div>
-            
-            <button class="primary-btn" style="width:100%; margin-top: auto; filter: grayscale(${isDone?1:0});" onclick="markDone('${task.id}')">
-                ${isDone ? '✓ Completed' : 'Mark as Done'}
+            <span class="task-badge badge-${task.visibility === 'public' ? 'pub' : 'priv'}">${task.visibility}</span>
+            <h3>${task.title}</h3>
+            <p class="creator">Assigned by ${task.creator}</p>
+
+            <span class="status-pill ${status}">
+                ${status.replace(/^\w/, c => c.toUpperCase())}
+            </span>
+
+            <p class="date">📅 ${task.start} — ${task.end}</p>
+
+            <button class="primary-btn" ${done ? 'disabled' : ''} onclick="markDone('${task.id}')">
+                ${done ? '✓ Completed' : 'Mark as Done'}
             </button>
 
-            ${task.visibility === 'public' && task.completedBy.length > 0 ? `
-                <div class="submitters-list">
-                    ${task.completedBy.map(name => `<span class="submitter-tag">${name}</span>`).join('')}
-                </div>
-                <p style="font-size: 9px; color: var(--muted); margin-top: 5px;">Has submitted work</p>
-            ` : ''}
+            ${task.completedBy.length && task.visibility === 'public'
+                ? `<div class="submitters-list">
+                    ${task.completedBy.map(n => `<span class="submitter-tag">${n}</span>`).join('')}
+                   </div>`
+                : ''}
         `;
-        list.appendChild(card);
+
+        taskList.appendChild(card);
     });
 }
 
