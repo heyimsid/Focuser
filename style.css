@@ -1,94 +1,81 @@
 :root {
-    --bg: #030508;
+    --bg: #08090a;
     --accent: #6366f1;
-    --glass: rgba(255, 255, 255, 0.04);
-    --border: rgba(255, 255, 255, 0.1);
-    --text-main: #f8fafc;
-    --text-muted: #64748b;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --muted: #808191;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text-main);
-    overflow-x: hidden;
-    line-height: 1.5;
-}
+body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-/* Glassmorphism Cards */
+/* Desktop & Mobile Syncing Layout */
+.app-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+/* Modern Navigation */
+.top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+.brand { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
+.brand span { color: var(--accent); }
+
+/* Glassmorphism Card */
 .glass-card {
     background: var(--glass);
     backdrop-filter: blur(20px);
     border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 25px;
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
-.workspace { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
-
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-.logo { font-size: 1.3rem; font-weight: 800; }
-.logo span { color: var(--accent); }
-
-/* Login Styles */
-.full-overlay {
-    position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-    display: flex; align-items: center; justify-content: center; padding: 20px;
+/* Redesigned Privacy Toggle (The Switch) */
+.toggle-container label { display: block; font-size: 10px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+.toggle-switch {
+    display: flex; position: relative; background: rgba(0,0,0,0.4); 
+    padding: 4px; border-radius: 12px; height: 44px; align-items: center;
 }
-.login-box { width: 100%; max-width: 350px; text-align: center; }
-
-/* Filter Pills (Matching Theme) */
-.filter-row {
-    display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.2);
-    padding: 5px; border-radius: 14px;
+.toggle-switch input { display: none; }
+.toggle-switch label {
+    flex: 1; text-align: center; z-index: 1; cursor: pointer; color: var(--muted);
+    font-size: 11px; font-weight: 700; transition: 0.3s;
 }
-.filter-pill {
-    flex: 1; border: none; background: transparent; color: var(--text-muted);
-    padding: 10px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+.toggle-switch input:checked + label { color: white; }
+.slider {
+    position: absolute; width: 48%; height: 36px; background: var(--accent);
+    border-radius: 10px; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
-.filter-pill.active { background: var(--accent); color: white; }
+#pub:checked ~ .slider { transform: translateX(100%); }
 
-/* Input Styling */
-.input-stack { display: flex; flex-direction: column; gap: 15px; }
-.date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.action-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+/* Responsive Grid */
+.task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
 
-input, .theme-select {
-    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
-    padding: 14px; border-radius: 14px; color: white; font-family: inherit;
-}
-
-.btn-add {
-    background: var(--accent); color: white; border: none;
-    padding: 14px 20px; border-radius: 14px; font-weight: 800; cursor: pointer;
-}
-
-/* Task List */
 .task-card {
-    background: var(--glass); border: 1px solid var(--border);
-    border-radius: 20px; padding: 18px; margin-top: 15px;
-    display: flex; align-items: flex-start; gap: 15px;
+    background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 24px;
+    transition: 0.3s; position: relative;
 }
+.task-card.public { border-left: 4px solid #22d3ee; }
 
-.creator-tag {
-    font-size: 0.65rem; background: var(--accent); color: white;
-    padding: 2px 8px; border-radius: 4px; font-weight: 800; margin-bottom: 5px; display: inline-block;
+/* Completion List UI */
+.completion-summary {
+    font-size: 11px; color: var(--accent); font-weight: 700; margin-top: 15px;
+    background: rgba(99, 102, 241, 0.1); padding: 8px 12px; border-radius: 8px;
 }
-
-.days-left { font-size: 0.75rem; color: var(--accent); font-weight: 700; }
 
 /* Mobile Optimizations */
-@media (max-width: 480px) {
-    .workspace { padding: 15px; }
-    .action-row { grid-template-columns: 1fr; }
-    .logo { font-size: 1.1rem; }
+@media (max-width: 600px) {
+    .meta-inputs { flex-direction: column; gap: 20px; }
+    .date-group { grid-template-columns: 1fr; }
+    .task-grid { grid-template-columns: 1fr; }
+    .app-container { padding: 15px; }
 }
 
-/* Background */
-.background-blobs {
-    position: fixed; inset: 0; z-index: -1;
-    background: radial-gradient(circle at top right, #1e1b4b 0%, transparent 40%),
-                radial-gradient(circle at bottom left, #0f172a 0%, transparent 40%);
+.primary-btn {
+    background: var(--accent); color: white; border: none; padding: 14px 28px;
+    border-radius: 16px; font-weight: 800; cursor: pointer; transition: 0.3s;
 }
+
+/* Pulse Animation for Sync */
+.sync-status { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.pulse { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
