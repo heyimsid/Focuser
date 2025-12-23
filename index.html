@@ -3,108 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenith Focus | Professional Workspace</title>
+    <title>Zenith Focus | Premium Task Suite</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --bg: #05070a;
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.3);
-            --card: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-high: #ffffff;
-            --text-low: #94a3b8;
-            --success: #10b981;
-        }
+</head>
+<body>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text-high);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at top right, #1e1b4b 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, #0f172a 0%, transparent 40%);
-        }
+    <div class="background-blobs"></div>
 
-        .workspace {
-            width: 100%;
-            max-width: 800px;
-            padding: 60px 20px;
-            z-index: 1;
-        }
+    <div class="workspace">
+        <header>
+            <div class="logo">ZENITH<span>FOCUS</span></div>
+            <div class="premium-badge">PRO MEMBER</div>
+        </header>
 
-        /* --- UI ELEMENTS --- */
-        .glass {
-            background: var(--card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+        <main class="glass-container">
+            <div class="input-grid">
+                <input type="text" id="taskInput" placeholder="What is your focus for today?">
+                <input type="date" id="dateInput">
+                <button class="btn-add" id="addBtn">ADD TASK</button>
+            </div>
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
+            <div class="stats-bar">
+                <span id="taskCount">0 Tasks Remaining</span>
+                <div class="divider"></div>
+                <span id="currentDateDisplay"></span>
+            </div>
 
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
-        .logo span { color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); }
+            <ul class="task-list" id="taskList">
+                </ul>
+        </main>
+    </div>
 
-        .premium-badge {
-            background: linear-gradient(45deg, #f59e0b, #ef4444);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
+    <div id="celebrationOverlay" class="overlay">
+        <div class="celebration-card">
+            <div class="icon-wrap">🏆</div>
+            <h2>MOMENT ACHIEVED!</h2>
+            <p id="quoteText">"Your only limit is your mind."</p>
+            <button class="btn-continue" onclick="closeCelebration()">Keep Moving Forward</button>
+        </div>
+    </div>
 
-        /* --- TASK CONTROLS --- */
-        .input-section {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        input, select {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px 20px;
-            color: white;
-            font-family: inherit;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-
-        .btn-add {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 0 25px;
-            border-radius: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        /* --- TASK LIST --- */
-        .task-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-
-        .task-card {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid
+    <script src="script.js"></script>
+</body>
+</html>
