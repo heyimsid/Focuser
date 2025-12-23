@@ -1,64 +1,68 @@
-let currentUser = localStorage.getItem('zenith_user') || "";
-// Simulating a Global Database using LocalStorage for demo purposes
-let globalTasks = JSON.parse(localStorage.getItem('zenith_network_data')) || [];
+let currentUser = localStorage.getItem('zenith_pro_user') || "";
+let tasks = JSON.parse(localStorage.getItem('zenith_pro_data')) || [];
 let currentFilter = 'all';
+let selectedPrivacy = 'private';
+
+// Boot Logic
+window.onload = () => {
+    if (currentUser) {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'grid';
+        document.getElementById('userName').innerText = currentUser;
+        document.getElementById('startDate').valueAsDate = new Date();
+        document.getElementById('endDate').valueAsDate = new Date(Date.now() + 86400000);
+        renderTasks();
+    }
+};
 
 function login() {
-    const name = document.getElementById('userNameInput').value;
-    if (!name || name.length < 2) return alert("Identify yourself correctly.");
-    currentUser = name;
-    localStorage.setItem('zenith_user', name);
+    const val = document.getElementById('userNameInput').value.trim();
+    if (val.length < 2) return;
+    localStorage.setItem('zenith_pro_user', val);
     location.reload();
 }
 
 function logout() {
-    localStorage.removeItem('zenith_user');
+    localStorage.removeItem('zenith_pro_user');
     location.reload();
 }
 
-if (currentUser) {
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('displayUserName').innerText = currentUser;
-    document.getElementById('startDate').valueAsDate = new Date();
-    renderTasks();
+function setPrivacy(val) {
+    selectedPrivacy = val;
+    document.getElementById('btnPriv').classList.toggle('active', val === 'private');
+    document.getElementById('btnPub').classList.toggle('active', val === 'public');
 }
 
 function addTask() {
-    const text = document.getElementById('taskInput').value;
-    const start = document.getElementById('startDate').value;
-    const end = document.getElementById('endDate').value;
-    const privacy = document.querySelector('input[name="privacy"]:checked').value;
-
-    if (!text) return;
+    const name = document.getElementById('taskInput').value;
+    if (!name) return;
 
     const newTask = {
-        id: Date.now(),
+        id: "T-" + Math.random().toString(36).substr(2, 9),
         creator: currentUser,
-        text: text,
-        start: start,
-        end: end,
-        privacy: privacy,
-        completedBy: [] // Track everyone who marks it done
+        title: name,
+        start: document.getElementById('startDate').value,
+        end: document.getElementById('endDate').value,
+        visibility: selectedPrivacy,
+        completedBy: []
     };
 
-    globalTasks.unshift(newTask);
-    saveData();
+    tasks.unshift(newTask);
+    save();
+    document.getElementById('taskInput').value = "";
 }
 
 function markDone(id) {
-    const task = globalTasks.find(t => t.id === id);
+    const task = tasks.find(t => t.id === id);
     if (!task.completedBy.includes(currentUser)) {
         task.completedBy.push(currentUser);
-        confetti({ particleCount: 150, spread: 70 });
-        saveData();
+        confetti({ particleCount: 150, spread: 60, origin: { y: 0.7 }, colors: ['#6366f1'] });
+        save();
     }
 }
 
-function setFilter(filter) {
-    currentFilter = filter;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`tab-${filter === 'my' ? 'my' : 'all'}`).classList.add('active');
+function setFilter(f) {
+    currentFilter = f;
     renderTasks();
 }
 
@@ -66,41 +70,40 @@ function renderTasks() {
     const list = document.getElementById('taskList');
     list.innerHTML = "";
 
-    globalTasks.filter(t => {
+    const filtered = tasks.filter(t => {
         if (currentFilter === 'my') return t.creator === currentUser;
-        return t.privacy === 'public' || t.creator === currentUser;
-    }).forEach(task => {
+        return t.visibility === 'public' || t.creator === currentUser;
+    });
+
+    filtered.forEach(task => {
         const isDone = task.completedBy.includes(currentUser);
-        
         const card = document.createElement('div');
-        card.className = `task-card ${task.privacy} ${isDone ? 'done' : ''}`;
+        card.className = 'task-card';
         
         card.innerHTML = `
-            <div class="card-head">
-                <span class="badge">${task.privacy.toUpperCase()}</span>
-                <span class="user-id">Owner: ${task.creator}</span>
-            </div>
-            <h2 style="margin: 15px 0 10px 0; font-size: 1.1rem;">${task.text}</h2>
-            <div style="font-size: 12px; color: var(--muted); margin-bottom: 15px;">
-                📅 Period: ${task.start} to ${task.end}
+            <div class="task-badge badge-${task.visibility === 'public' ? 'pub' : 'priv'}">${task.visibility}</div>
+            <h3 style="font-size: 1.1rem; font-weight: 700;">${task.title}</h3>
+            <p style="font-size: 0.75rem; color: var(--muted);">Assigned by ${task.creator}</p>
+            <div style="font-size: 0.8rem; font-weight: 600; margin: 10px 0;">
+                📅 ${task.start} — ${task.end}
             </div>
             
-            <button class="primary-btn" style="width:100%; opacity: ${isDone ? 0.5 : 1}" 
-                    onclick="markDone(${task.id})">
-                ${isDone ? '✓ COMPLETED' : 'MARK AS DONE'}
+            <button class="primary-btn" style="width:100%; margin-top: auto; filter: grayscale(${isDone?1:0});" onclick="markDone('${task.id}')">
+                ${isDone ? '✓ Completed' : 'Mark as Done'}
             </button>
 
-            ${task.privacy === 'public' && task.completedBy.length > 0 ? `
-                <div class="completion-summary">
-                    👥 SUBMITTED BY: ${task.completedBy.join(', ')}
+            ${task.visibility === 'public' && task.completedBy.length > 0 ? `
+                <div class="submitters-list">
+                    ${task.completedBy.map(name => `<span class="submitter-tag">${name}</span>`).join('')}
                 </div>
+                <p style="font-size: 9px; color: var(--muted); margin-top: 5px;">Has submitted work</p>
             ` : ''}
         `;
         list.appendChild(card);
     });
 }
 
-function saveData() {
-    localStorage.setItem('zenith_network_data', JSON.stringify(globalTasks));
+function save() {
+    localStorage.setItem('zenith_pro_data', JSON.stringify(tasks));
     renderTasks();
 }
