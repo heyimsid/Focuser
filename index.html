@@ -4,81 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Zenith Pro | Enterprise Productivity</title>
+
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div id="authScreen" class="auth-wrapper">
-        <div class="auth-inner">
-            <div class="auth-logo">Z<span>P</span></div>
-            <h1>Welcome to Zenith Pro</h1>
-            <p>Enter your professional alias to sync with the network.</p>
-            <input type="text" id="userNameInput" placeholder="Full Name" autofocus>
-            <button class="primary-btn" onclick="login()">Initialize Workspace</button>
+
+<!-- AUTH -->
+<div id="authScreen" class="auth-wrapper">
+    <div class="auth-inner card-glass">
+        <div class="auth-logo">Z<span>P</span></div>
+        <h1>Zenith Pro</h1>
+        <p>Secure workspace initialization</p>
+
+        <input type="text" id="userNameInput" placeholder="Enter full name" autofocus>
+        <button class="primary-btn" onclick="login()">Initialize Workspace</button>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app-layout" style="display:none;">
+    <aside class="sidebar">
+        <div class="side-logo">ZENITH<span>PRO</span></div>
+
+        <nav>
+            <button class="nav-item active" onclick="setFilter('all')">🌐 Global Hub</button>
+            <button class="nav-item" onclick="setFilter('my')">👤 My Assignments</button>
+        </nav>
+
+        <div class="user-pill">
+            <div class="avatar" id="avatarIcon"></div>
+            <span id="userName"></span>
+            <button class="logout-icon" onclick="logout()">⎋</button>
         </div>
-    </div>
+    </aside>
 
-    <div id="app" class="app-layout" style="display: none;">
-        <aside class="sidebar">
-            <div class="side-logo">ZENITH<span>PRO</span></div>
-            <nav>
-                <button class="nav-item active" onclick="setFilter('all')"><i>🌐</i> Global Hub</button>
-                <button class="nav-item" onclick="setFilter('my')"><i>👤</i> My Assignments</button>
-            </nav>
-            <div class="user-pill">
-                <div class="avatar" id="avatarIcon"></div>
-                <span id="userName">User</span>
-                <button onclick="logout()" class="logout-icon">⎋</button>
+    <main class="content">
+        <header class="mobile-header">
+            <div class="side-logo">Z<span>P</span></div>
+            <button onclick="logout()">Logout</button>
+        </header>
+
+        <section class="top-section">
+            <h2>Mission Control</h2>
+            <p>Deploy tasks to the enterprise network</p>
+
+            <div class="bento-input-grid card-glass">
+                <div class="input-card">
+                    <label>MISSION NAME</label>
+                    <input type="text" id="taskInput" placeholder="Final Year Project Submission">
+                </div>
+
+                <div class="input-card">
+                    <label>TIME PERIOD</label>
+                    <div class="range-inputs">
+                        <input type="date" id="startDate">
+                        <span>to</span>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <label>VISIBILITY</label>
+                    <div class="selector-group">
+                        <button id="btnPriv" class="sel-btn active" onclick="setPrivacy('private')">Private</button>
+                        <button id="btnPub" class="sel-btn" onclick="setPrivacy('public')">Public</button>
+                    </div>
+                </div>
+
+                <button class="primary-btn deploy-btn" onclick="addTask()">Deploy Mission</button>
             </div>
-        </aside>
+        </section>
 
-        <main class="content">
-            <header class="mobile-header">
-                <div class="side-logo">Z<span>P</span></div>
-                <button onclick="logout()">Logout</button>
-            </header>
+        <section class="task-section">
+            <div id="taskList" class="professional-grid"></div>
+        </section>
+    </main>
+</div>
 
-            <section class="top-section">
-                <div class="section-title">
-                    <h2>Mission Control</h2>
-                    <p>Deploy new tasks to the private or college network.</p>
-                </div>
-
-                <div class="bento-input-grid">
-                    <div class="input-card main-task">
-                        <label>MISSION NAME</label>
-                        <input type="text" id="taskInput" placeholder="e.g. Final Year Project Submission">
-                    </div>
-                    <div class="input-card date-range">
-                        <label>TIME PERIOD</label>
-                        <div class="range-inputs">
-                            <input type="date" id="startDate">
-                            <span>to</span>
-                            <input type="date" id="endDate">
-                        </div>
-                    </div>
-                    <div class="input-card privacy-toggle">
-                        <label>VISIBILITY</label>
-                        <div class="selector-group">
-                            <button id="btnPriv" class="sel-btn active" onclick="setPrivacy('private')">Private</button>
-                            <button id="btnPub" class="sel-btn" onclick="setPrivacy('public')">Public</button>
-                        </div>
-                    </div>
-                    <button class="deploy-btn" onclick="addTask()">DEPLOY MISSION</button>
-                </div>
-            </section>
-
-            <section class="task-section">
-                <div class="feed-header">
-                    <span id="feedTitle">Global Feed</span>
-                    <div class="status-indicator"><span class="dot"></span> Live Sync</div>
-                </div>
-                <div id="taskList" class="professional-grid"></div>
-            </section>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
